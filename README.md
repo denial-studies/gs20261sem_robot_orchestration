@@ -9,7 +9,7 @@ Sistema de orquestração de sondas autônomas para exploração e mineração e
 
 ## Vídeo de Demonstração
 
-**YouTube:** [INSERIR LINK DO YOUTUBE AQUI]
+**YouTube:** https://youtu.be/PpMkrF5hknY
 
 ---
 
@@ -35,10 +35,11 @@ br.com.fiap.space
 ├── application        → MissaoService, CentroDeComando (Singleton)
 ├── domain
 │   ├── Sonda (Abstrata), SondaMineradora, SondaExploradora
+│   ├── DroneMineradora, DroneExploradora
 │   ├── enums          → Recurso, Terreno, StatusFuncionamento
 │   ├── valueobjects   → Coordenada, NivelEnergia, CompartimentoCarga, RelatorioSistema
 │   ├── exceptions     → BateriaCriticaException, CargaExcedidaException, TerrenoInvalidoException
-│   ├── interfaces     → Recarregavel
+│   ├── interfaces     → Recarregavel, TrocarBateria
 │   └── factory        → SondaFactory
 └── infrastructure     → SondaRepository (Simulação de persistência em memória)
 ```
@@ -61,11 +62,12 @@ br.com.fiap.space
 
 ## Funcionalidades Principais
 
-- Lançamento de sondas de mineração e exploração.
-- Listagem de sondas ativas com seus respectivos status.
+- Lançamento de sondas (Rover) e drones de mineração e exploração.
+- Listagem de sondas e drones ativos com seus respectivos status.
 - Execução de rotina autônoma de deslocamento e ação local.
-- Recarga de bateria na base (através da interface `Recarregavel`).
+- Recarga de bateria na base para rovers (interface `Recarregavel`) e recarga em voo para drones (interface `TrocarBateria`).
+- Drones podem acessar terrenos do tipo Cratera (rovers não).
 - Descarregamento de compartimento de carga.
-- Ajuste manual de sensor de sonda exploradora.
+- Ajuste manual de sensor de sonda/drone exploradora.
 - Persistência em memória via padrão Repository.
 - Tratamento e exibição amigável de exceções customizadas sem interromper o fluxo do sistema.

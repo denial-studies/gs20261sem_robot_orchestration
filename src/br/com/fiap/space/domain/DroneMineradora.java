@@ -1,21 +1,21 @@
 package br.com.fiap.space.domain;
 
 import br.com.fiap.space.domain.enums.Recurso;
-import br.com.fiap.space.domain.interfaces.Recarregavel;
+import br.com.fiap.space.domain.interfaces.TrocarBateria;
 import br.com.fiap.space.domain.valueobjects.CompartimentoCarga;
 import br.com.fiap.space.domain.valueobjects.NivelEnergia;
 
-public class SondaMineradora extends Sonda implements Recarregavel {
+public class DroneMineradora extends Sonda implements TrocarBateria {
 
     private CompartimentoCarga carga;
 
     private static final double CUSTO_MINERACAO = 5.0;
 
-    public SondaMineradora(String idSonda, double capacidadeMaxima) {
+    public DroneMineradora(String idSonda, double capacidadeMaxima) {
         super(idSonda, new NivelEnergia(100.0, 100.0));
         if (capacidadeMaxima <= 0) {
             throw new IllegalArgumentException(
-                    "A capacidade máxima do compartimento deve ser positiva.");
+                    "A capacidade maxima do compartimento deve ser positiva.");
         }
         this.carga = new CompartimentoCarga(0, capacidadeMaxima, null);
     }
@@ -40,13 +40,13 @@ public class SondaMineradora extends Sonda implements Recarregavel {
     }
 
     @Override
-    public void conectarBase() {
+    public void trocarBateria() {
         this.bateria = new NivelEnergia(bateria.getCapacidadeMaxima(), bateria.getCapacidadeMaxima());
     }
 
     @Override
     public String getTipoSonda() {
-        return "ROVER";
+        return "DRONE";
     }
 
     @Override

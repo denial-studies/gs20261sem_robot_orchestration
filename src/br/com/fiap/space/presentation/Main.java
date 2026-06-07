@@ -5,6 +5,8 @@ import br.com.fiap.space.application.MissaoService;
 import br.com.fiap.space.domain.Sonda;
 import br.com.fiap.space.domain.SondaExploradora;
 import br.com.fiap.space.domain.SondaMineradora;
+import br.com.fiap.space.domain.DroneMineradora;
+import br.com.fiap.space.domain.DroneExploradora;
 import br.com.fiap.space.domain.enums.Terreno;
 import br.com.fiap.space.domain.exceptions.BateriaCriticaException;
 import br.com.fiap.space.domain.exceptions.CargaExcedidaException;
@@ -18,23 +20,23 @@ import java.util.Scanner;
 
 public class Main {
 
-    private static final String SEPARADOR = "════════════════════════════════════════════════════";
+    private static final String SEPARADOR = "====================================================";
     private static final String TITULO = "\n" +
-            "╔══════════════════════════════════════════════════╗\n" +
-            "║   🚀  SURFACE AUTONOMOUS FLEET SYSTEM (SAFS)    ║\n" +
-            "║       FIAP - Global Solution 2026               ║\n" +
-            "║       Nova Economia Espacial                    ║\n" +
-            "╚══════════════════════════════════════════════════╝\n";
+            "+--------------------------------------------------+\n" +
+            "|    SURFACE AUTONOMOUS FLEET SYSTEM (SAFS)        |\n" +
+            "|       FIAP - Global Solution 2026                |\n" +
+            "|       Nova Economia Espacial                     |\n" +
+            "+--------------------------------------------------+\n";
 
     public static void main(String[] args) {
 
-        // Camada de Infraestrutura: repositório simulado (banco de dados em memória)
+        // Camada de Infraestrutura: repositorio simulado (banco de dados em memoria)
         SondaRepository repositorio = new SondaRepository();
 
-        // Camada de Aplicação: Singleton do Centro de Comando recebe o repositório
+        // Camada de Aplicacao: Singleton do Centro de Comando recebe o repositorio
         CentroDeComando centroDeComando = CentroDeComando.getInstancia(repositorio);
 
-        // Camada de Aplicação: Serviço de missão recebe o Centro de Comando
+        // Camada de Aplicacao: Servico de missao recebe o Centro de Comando
         MissaoService missaoService = new MissaoService(centroDeComando);
 
         Scanner scanner = new Scanner(System.in);
@@ -44,7 +46,7 @@ public class Main {
 
         while (executando) {
             exibirMenu();
-            System.out.print("  ➤ Opção: ");
+            System.out.print("  > Opcao: ");
             String opcao = scanner.nextLine().trim();
 
             System.out.println();
@@ -73,28 +75,28 @@ public class Main {
                         consultarBancoDeDados(repositorio);
                         break;
                     case "0":
-                        System.out.println("  Encerrando o sistema SAFS. Até a próxima missão, Comandante!");
+                        System.out.println("  Encerrando o sistema SAFS. Ate a proxima missao, Comandante!");
                         executando = false;
                         break;
                     default:
-                        System.out.println("  ⚠ Opção inválida. Tente novamente.");
+                        System.out.println("  [!] Opcao invalida. Tente novamente.");
                         break;
                 }
             } catch (BateriaCriticaException e) {
-                System.out.println("\n  🔋 ALERTA — BATERIA CRÍTICA!");
+                System.out.println("\n  [ALERTA] BATERIA CRITICA!");
                 System.out.println("  " + e.getMessage());
             } catch (TerrenoInvalidoException e) {
-                System.out.println("\n  🪨 ALERTA — TERRENO INVÁLIDO!");
+                System.out.println("\n  [ALERTA] TERRENO INVALIDO!");
                 System.out.println("  " + e.getMessage());
             } catch (CargaExcedidaException e) {
-                System.out.println("\n  📦 ALERTA — CARGA EXCEDIDA!");
+                System.out.println("\n  [ALERTA] CARGA EXCEDIDA!");
                 System.out.println("  " + e.getMessage());
             } catch (NumberFormatException e) {
-                System.out.println("\n  ⚠ Entrada numérica inválida. Por favor, insira um número válido.");
+                System.out.println("\n  [!] Entrada numerica invalida. Por favor, insira um numero valido.");
             } catch (IllegalArgumentException e) {
-                System.out.println("\n  ⚠ ERRO DE VALIDAÇÃO: " + e.getMessage());
+                System.out.println("\n  [!] ERRO DE VALIDACAO: " + e.getMessage());
             } catch (Exception e) {
-                System.out.println("\n  ❌ Erro inesperado: " + e.getMessage());
+                System.out.println("\n  [ERRO] Erro inesperado: " + e.getMessage());
             }
 
             System.out.println();
@@ -105,31 +107,31 @@ public class Main {
 
     private static void exibirMenu() {
         System.out.println(SEPARADOR);
-        System.out.println("  MENU DE COMANDOS — Comandante de Missão");
+        System.out.println("  MENU DE COMANDOS - Comandante de Missao");
         System.out.println(SEPARADOR);
-        System.out.println("  [1] Lançar nova Sonda (Factory)");
-        System.out.println("  [2] Listar Sondas Ativas (Centro de Comando)");
-        System.out.println("  [3] Executar Rotina Autônoma (Template Method)");
-        System.out.println("  [4] Descarregar Compartimento (SondaMineradora)");
-        System.out.println("  [5] Ajustar Sensor (SondaExploradora)");
-        System.out.println("  [6] Recarregar Bateria na Base");
+        System.out.println("  [1] Lancar nova Sonda ou Drone (Factory)");
+        System.out.println("  [2] Listar Sondas/Drones Ativos (Centro de Comando)");
+        System.out.println("  [3] Executar Rotina Autonoma (Template Method)");
+        System.out.println("  [4] Descarregar Compartimento (Mineradoras)");
+        System.out.println("  [5] Ajustar Sensor (Exploradoras)");
+        System.out.println("  [6] Recarregar Bateria");
         System.out.println("  [7] Consultar Banco de Dados (Repository)");
         System.out.println("  [0] Sair");
         System.out.println(SEPARADOR);
     }
 
     private static void lancarSonda(Scanner scanner, MissaoService missaoService) {
-        System.out.println("  ── LANÇAR NOVA SONDA ──");
-        System.out.println("  Tipos de missão: MINERACAO | EXPLORACAO");
-        System.out.print("  Tipo de missão: ");
+        System.out.println("  -- LANCAR NOVA SONDA/DRONE --");
+        System.out.println("  Tipos: MINERACAO | EXPLORACAO | DRONE_MINERACAO | DRONE_EXPLORACAO");
+        System.out.print("  Tipo de missao: ");
         String tipo = scanner.nextLine().trim();
 
         System.out.print("  ID da sonda (ex: SND-001): ");
         String id = scanner.nextLine().trim();
 
         double param;
-        if (tipo.equalsIgnoreCase("MINERACAO")) {
-            System.out.print("  Capacidade máxima do compartimento de carga (kg): ");
+        if (tipo.equalsIgnoreCase("MINERACAO") || tipo.equalsIgnoreCase("DRONE_MINERACAO")) {
+            System.out.print("  Capacidade maxima do compartimento de carga (kg): ");
             param = Double.parseDouble(scanner.nextLine().trim());
         } else {
             System.out.print("  Alcance do sensor (unidades): ");
@@ -137,15 +139,15 @@ public class Main {
         }
 
         Sonda sonda = missaoService.lancarSonda(tipo, id, param);
-        System.out.println("\n  ✔ Sonda lançada e salva no banco com sucesso!");
+        System.out.println("\n  [OK] Sonda lancada e salva no banco com sucesso!");
         System.out.println("  [" + sonda.getTipo() + "] " + sonda.getIdSonda()
-                + " | Posição: (" + sonda.getPosicaoAtual().getEixoX()
+                + " | Posicao: (" + sonda.getPosicaoAtual().getEixoX()
                 + ", " + sonda.getPosicaoAtual().getEixoY() + ")"
                 + " | Bateria: " + String.format("%.1f", sonda.nivelAtualBateria()));
     }
 
     private static void listarSondas(MissaoService missaoService) {
-        System.out.println("  ── SONDAS ATIVAS (Centro de Comando) ──");
+        System.out.println("  -- SONDAS ATIVAS (Centro de Comando) --");
         List<Sonda> sondas = missaoService.listarSondas();
 
         if (sondas.isEmpty()) {
@@ -157,18 +159,30 @@ public class Main {
         for (int i = 0; i < sondas.size(); i++) {
             Sonda s = sondas.get(i);
             System.out.println("  " + (i + 1) + ". [" + s.getTipo() + "] "
-                    + s.getIdSonda() + " | Posição: ("
+                    + s.getIdSonda() + " | Posicao: ("
                     + s.getPosicaoAtual().getEixoX() + ", " + s.getPosicaoAtual().getEixoY() + ")"
                     + " | Bateria: " + String.format("%.1f", s.nivelAtualBateria()));
 
             if (s instanceof SondaMineradora) {
                 SondaMineradora m = (SondaMineradora) s;
                 String tipoCarga = m.getCarga().getTipoCarga() != null
-                        ? m.getCarga().getTipoCarga().getNome() : "Vazio";
+                        ? m.getCarga().getTipoCarga().getNome()
+                        : "Vazio";
                 System.out.println("     Carga [" + tipoCarga + "]: "
                         + String.format("%.1f / %.1f kg",
                                 m.getCarga().getVolumeOcupado(),
                                 m.getCarga().getVolumeMaximo()));
+            }
+
+            if (s instanceof DroneMineradora) {
+                DroneMineradora dm = (DroneMineradora) s;
+                String tipoCarga = dm.getCarga().getTipoCarga() != null
+                        ? dm.getCarga().getTipoCarga().getNome()
+                        : "Vazio";
+                System.out.println("     Carga [" + tipoCarga + "]: "
+                        + String.format("%.1f / %.1f kg",
+                                dm.getCarga().getVolumeOcupado(),
+                                dm.getCarga().getVolumeMaximo()));
             }
 
             if (s instanceof SondaExploradora) {
@@ -176,17 +190,22 @@ public class Main {
                 System.out.println("     Alcance Sensor: " + e.getAlcanceSensor() + " unidades");
             }
 
+            if (s instanceof DroneExploradora) {
+                DroneExploradora de = (DroneExploradora) s;
+                System.out.println("     Alcance Sensor: " + de.getAlcanceSensor() + " unidades");
+            }
+
             RelatorioSistema rel = s.validarSistema();
             System.out.println("     Bateria:  " + rel.getStatusBateria());
             System.out.println("     Rodas:    " + rel.getStatusRodas());
             System.out.println("     Software: " + rel.getStatusSoftware());
             System.out.println("     Danos:    " + rel.getStatusDanos());
-            System.out.println("     Funções:  " + rel.getStatusFuncoes());
+            System.out.println("     Funcoes:  " + rel.getStatusFuncoes());
         }
     }
 
     private static void executarRotina(Scanner scanner, MissaoService missaoService) {
-        System.out.println("  ── EXECUTAR ROTINA AUTÔNOMA ──");
+        System.out.println("  -- EXECUTAR ROTINA AUTONOMA --");
         System.out.print("  ID da sonda: ");
         String id = scanner.nextLine().trim();
 
@@ -206,35 +225,35 @@ public class Main {
         int terrenoIdx = Integer.parseInt(scanner.nextLine().trim()) - 1;
 
         if (terrenoIdx < 0 || terrenoIdx >= terrenos.length) {
-            throw new IllegalArgumentException("Índice de terreno inválido.");
+            throw new IllegalArgumentException("Indice de terreno invalido.");
         }
 
-        System.out.println("\n╔══════════════════════════════════════════════════╗");
-        System.out.println("║  ROTINA AUTÔNOMA — Sonda: " + id);
-        System.out.println("╚══════════════════════════════════════════════════╝");
+        System.out.println("\n+--------------------------------------------------+");
+        System.out.println("|  ROTINA AUTONOMA - Sonda: " + id);
+        System.out.println("+--------------------------------------------------+");
 
         System.out.println("\n  [PASSO 1] Validando sistema...");
         System.out.println("  [PASSO 2] Deslocando para (" + x + ", " + y + ")...");
-        System.out.println("  [PASSO 3] Realizando ação local...");
-        System.out.println("  [PASSO 4] Enviando relatório ao Centro de Comando...");
+        System.out.println("  [PASSO 3] Realizando acao local...");
+        System.out.println("  [PASSO 4] Enviando relatorio ao Centro de Comando...");
 
         missaoService.executarRotina(id, destino, terrenos[terrenoIdx]);
 
-        System.out.println("\n  ✔ Rotina autônoma concluída com sucesso!");
-        System.out.println("══════════════════════════════════════════════════");
+        System.out.println("\n  [OK] Rotina autonoma concluida com sucesso!");
+        System.out.println("====================================================");
     }
 
     private static void descarregarCompartimento(Scanner scanner, MissaoService missaoService) {
-        System.out.println("  ── DESCARREGAR COMPARTIMENTO ──");
+        System.out.println("  -- DESCARREGAR COMPARTIMENTO --");
         System.out.print("  ID da sonda mineradora: ");
         String id = scanner.nextLine().trim();
 
         missaoService.descarregarCompartimento(id);
-        System.out.println("  ✔ Compartimento descarregado com sucesso.");
+        System.out.println("  [OK] Compartimento descarregado com sucesso.");
     }
 
     private static void ajustarSensor(Scanner scanner, MissaoService missaoService) {
-        System.out.println("  ── AJUSTAR SENSOR ──");
+        System.out.println("  -- AJUSTAR SENSOR --");
         System.out.print("  ID da sonda exploradora: ");
         String id = scanner.nextLine().trim();
 
@@ -242,20 +261,20 @@ public class Main {
         double novoAlcance = Double.parseDouble(scanner.nextLine().trim());
 
         missaoService.ajustarSensor(id, novoAlcance);
-        System.out.println("  ✔ Sensor ajustado para alcance: " + novoAlcance);
+        System.out.println("  [OK] Sensor ajustado para alcance: " + novoAlcance);
     }
 
     private static void recarregarBateria(Scanner scanner, MissaoService missaoService) {
-        System.out.println("  ── RECARREGAR BATERIA ──");
+        System.out.println("  -- RECARREGAR BATERIA --");
         System.out.print("  ID da sonda: ");
         String id = scanner.nextLine().trim();
 
         missaoService.recarregarSonda(id);
-        System.out.println("  ✔ Bateria recarregada com sucesso.");
+        System.out.println("  [OK] Bateria recarregada com sucesso.");
     }
 
     private static void consultarBancoDeDados(SondaRepository repositorio) {
-        System.out.println("  ── BANCO DE DADOS (SondaRepository) ──");
+        System.out.println("  -- BANCO DE DADOS (SondaRepository) --");
 
         List<Sonda> registros = repositorio.listarTodas();
 
@@ -265,9 +284,9 @@ public class Main {
         }
 
         System.out.println();
-        System.out.println("  ┌────────────┬──────────────┬───────────┬────────────────┬────────────────────┐");
-        System.out.println("  │     ID     │     TIPO     │  POSIÇÃO  │    BATERIA     │       CARGA        │");
-        System.out.println("  ├────────────┼──────────────┼───────────┼────────────────┼────────────────────┤");
+        System.out.println("  +------------+--------------------+-----------+----------------+--------------------+");
+        System.out.println("  |     ID     |        TIPO        |  POSICAO  |    BATERIA     |       CARGA        |");
+        System.out.println("  +------------+--------------------+-----------+----------------+--------------------+");
 
         for (int i = 0; i < registros.size(); i++) {
             Sonda s = registros.get(i);
@@ -285,12 +304,18 @@ public class Main {
                         m.getCarga().getVolumeOcupado(),
                         m.getCarga().getVolumeMaximo());
             }
+            if (s instanceof DroneMineradora) {
+                DroneMineradora dm = (DroneMineradora) s;
+                carga = String.format("%.1f/%.1f kg",
+                        dm.getCarga().getVolumeOcupado(),
+                        dm.getCarga().getVolumeMaximo());
+            }
 
-            System.out.println(String.format("  │ %-10s │ %-12s │ %-9s │ %-14s │ %-18s │",
+            System.out.println(String.format("  | %-10s | %-18s | %-9s | %-14s | %-18s |",
                     idSonda, tipo, posicao, bateria, carga));
         }
 
-        System.out.println("  └────────────┴──────────────┴───────────┴────────────────┴────────────────────┘");
+        System.out.println("  +------------+--------------------+-----------+----------------+--------------------+");
         System.out.println("  Total de registros: " + registros.size());
     }
 }

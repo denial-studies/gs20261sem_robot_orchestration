@@ -1,5 +1,7 @@
 package br.com.fiap.space.domain.factory;
 
+import br.com.fiap.space.domain.DroneMineradora;
+import br.com.fiap.space.domain.DroneExploradora;
 import br.com.fiap.space.domain.SondaExploradora;
 import br.com.fiap.space.domain.SondaMineradora;
 
@@ -15,5 +17,12 @@ public class SondaFactory {
     public static SondaExploradora criarSondaExploradora(String idSonda, double alcanceSensor) {
         return new SondaExploradora(idSonda, alcanceSensor);
     }
-}
 
+    public static DroneMineradora criarDroneMineradora(String idSonda, double capacidadeMaxima) {
+        return new DroneMineradora(idSonda, capacidadeMaxima);
+    }
+
+    public static DroneExploradora criarDroneExploradora(String idSonda, double alcanceSensor) {
+        return new DroneExploradora(idSonda, alcanceSensor);
+    }
+}

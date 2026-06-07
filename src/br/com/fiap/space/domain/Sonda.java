@@ -48,10 +48,10 @@ public abstract class Sonda {
             throw new IllegalArgumentException("O terreno não pode ser nulo.");
         }
 
-        if (terreno == Terreno.CRATERA) {
+        if (terreno == Terreno.CRATERA && getTipoSonda().equals("ROVER")) {
             throw new TerrenoInvalidoException(
-                    "Terreno inválido! A sonda '" + idSonda
-                            + "' (com rodas) não pode acessar uma Cratera profunda.");
+                    "Terreno invalido! A sonda '" + idSonda
+                            + "' (com rodas) nao pode acessar uma Cratera profunda.");
         }
 
         double custoEnergia = CUSTO_BASE_MOVIMENTO * terreno.getMultiplicadorConsumo();
@@ -67,6 +67,10 @@ public abstract class Sonda {
         this.bateria = new NivelEnergia(novaCapacidade, bateria.getCapacidadeMaxima());
         this.posicaoAtual = posicao;
     }
+
+    public abstract String getTipoSonda();
+
+    public abstract String getTipoFuncao();
 
     protected abstract void realizarAcaoLocal();
 
@@ -96,5 +100,7 @@ public abstract class Sonda {
         return validarSistema();
     }
 
-    public abstract String getTipo();
+    public String getTipo() {
+        return getTipoSonda() + " " + getTipoFuncao();
+    }
 }

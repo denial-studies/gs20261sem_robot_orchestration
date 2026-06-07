@@ -1,15 +1,15 @@
 package br.com.fiap.space.domain;
 
-import br.com.fiap.space.domain.interfaces.Recarregavel;
+import br.com.fiap.space.domain.interfaces.TrocarBateria;
 import br.com.fiap.space.domain.valueobjects.NivelEnergia;
 
-public class SondaExploradora extends Sonda implements Recarregavel {
+public class DroneExploradora extends Sonda implements TrocarBateria {
 
     private double alcanceSensor;
 
     private static final double CUSTO_VARREDURA = 8.0;
 
-    public SondaExploradora(String idSonda, double alcanceSensor) {
+    public DroneExploradora(String idSonda, double alcanceSensor) {
         super(idSonda, new NivelEnergia(100.0, 100.0));
         if (alcanceSensor <= 0) {
             throw new IllegalArgumentException(
@@ -42,13 +42,13 @@ public class SondaExploradora extends Sonda implements Recarregavel {
     }
 
     @Override
-    public void conectarBase() {
+    public void trocarBateria() {
         this.bateria = new NivelEnergia(bateria.getCapacidadeMaxima(), bateria.getCapacidadeMaxima());
     }
 
     @Override
     public String getTipoSonda() {
-        return "ROVER";
+        return "DRONE";
     }
 
     @Override

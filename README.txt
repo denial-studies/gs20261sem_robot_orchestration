@@ -12,7 +12,7 @@ em Java com arquitetura em camadas (DDD).
   VIDEO DE DEMONSTRACAO
 ---------------------------------------------------------------
 
-YouTube: [INSERIR LINK DO YOUTUBE AQUI]
+YouTube: https://youtu.be/PpMkrF5hknY
 
 ---------------------------------------------------------------
   INTEGRANTES DO GRUPO
@@ -35,10 +35,11 @@ br.com.fiap.space
   application        -> MissaoService, CentroDeComando (Singleton)
   domain
     Sonda (Abstrata), SondaMineradora, SondaExploradora
+    DroneMineradora, DroneExploradora
     enums            -> Recurso, Terreno, StatusFuncionamento
     valueobjects     -> Coordenada, NivelEnergia, CompartimentoCarga, RelatorioSistema
     exceptions       -> BateriaCriticaException, CargaExcedidaException, TerrenoInvalidoException
-    interfaces       -> Recarregavel
+    interfaces       -> Recarregavel, TrocarBateria
     factory          -> SondaFactory
   infrastructure     -> SondaRepository (simulacao de banco de dados em memoria)
 
