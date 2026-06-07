@@ -1,4 +1,4 @@
-package br.com.fiap.space.domain;
+package br.com.fiap.space.domain.enums;
 
 public enum Terreno {
 
@@ -6,13 +6,10 @@ public enum Terreno {
     CRATERA("Cratera", 4.0),
     SOLO_ROCHOSO("Solo Rochoso", 2.5);
 
-    private final String tipoSolo;
-    private final double multiplicadorConsumo;
+    private String tipoSolo;
+    private double multiplicadorConsumo;
 
     Terreno(String tipoSolo, double multiplicadorConsumo) {
-        if (multiplicadorConsumo <= 0) {
-            throw new IllegalArgumentException("O multiplicador de consumo deve ser estritamente positivo (> 0).");
-        }
         this.tipoSolo = tipoSolo;
         this.multiplicadorConsumo = multiplicadorConsumo;
     }

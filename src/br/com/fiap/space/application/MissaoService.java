@@ -1,6 +1,9 @@
 package br.com.fiap.space.application;
 
-import br.com.fiap.space.domain.*;
+import br.com.fiap.space.domain.Sonda;
+import br.com.fiap.space.domain.SondaExploradora;
+import br.com.fiap.space.domain.SondaMineradora;
+import br.com.fiap.space.domain.enums.Terreno;
 import br.com.fiap.space.domain.factory.SondaFactory;
 import br.com.fiap.space.domain.interfaces.Recarregavel;
 import br.com.fiap.space.domain.valueobjects.Coordenada;
@@ -9,7 +12,7 @@ import java.util.List;
 
 public class MissaoService {
 
-    private final CentroDeComando centroDeComando;
+    private CentroDeComando centroDeComando;
 
     public MissaoService(CentroDeComando centroDeComando) {
         if (centroDeComando == null) {
@@ -19,7 +22,22 @@ public class MissaoService {
     }
 
     public Sonda lancarSonda(String tipoMissao, String idSonda, double parametroExtra) {
-        Sonda sonda = SondaFactory.criarSonda(tipoMissao, idSonda, parametroExtra);
+        if (tipoMissao == null || tipoMissao.trim().isEmpty()) {
+            throw new IllegalArgumentException("O tipo de missão não pode ser nulo ou vazio.");
+        }
+
+        String tipo = tipoMissao.toUpperCase().trim();
+        Sonda sonda;
+        if (tipo.equals("MINERACAO")) {
+            sonda = SondaFactory.criarSondaMineradora(idSonda, parametroExtra);
+        } else if (tipo.equals("EXPLORACAO")) {
+            sonda = SondaFactory.criarSondaExploradora(idSonda, parametroExtra);
+        } else {
+            throw new IllegalArgumentException(
+                    "Tipo de missão desconhecido: '" + tipoMissao
+                            + "'. Valores válidos: MINERACAO, EXPLORACAO.");
+        }
+
         centroDeComando.registrarSonda(sonda);
         return sonda;
     }
@@ -35,20 +53,6 @@ public class MissaoService {
         }
 
         sonda.executarRotinaAutonoma(destino, terreno);
-    }
-
-    public void minerar(String idSonda, Recurso recurso, int quantidade) {
-        Sonda sonda = centroDeComando.buscarSonda(idSonda);
-        if (sonda == null) {
-            throw new IllegalArgumentException("Sonda não encontrada com ID: " + idSonda);
-        }
-
-        if (!(sonda instanceof SondaMineradora)) {
-            throw new IllegalArgumentException("A sonda '" + idSonda + "' não é uma mineradora.");
-        }
-
-        SondaMineradora mineradora = (SondaMineradora) sonda;
-        mineradora.minerar(recurso, quantidade);
     }
 
     public void descarregarCompartimento(String idSonda) {
@@ -91,19 +95,5 @@ public class MissaoService {
 
         Recarregavel recarregavel = (Recarregavel) sonda;
         recarregavel.conectarBase();
-    }
-
-    public boolean transmitirDados(String idSonda) {
-        Sonda sonda = centroDeComando.buscarSonda(idSonda);
-        if (sonda == null) {
-            throw new IllegalArgumentException("Sonda não encontrada com ID: " + idSonda);
-        }
-
-        if (!(sonda instanceof SondaExploradora)) {
-            throw new IllegalArgumentException("A sonda '" + idSonda + "' não é uma exploradora.");
-        }
-
-        SondaExploradora exploradora = (SondaExploradora) sonda;
-        return exploradora.transmitirDados();
     }
 }

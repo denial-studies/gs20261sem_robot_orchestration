@@ -1,5 +1,7 @@
 package br.com.fiap.space.domain;
 
+import br.com.fiap.space.domain.enums.StatusFuncionamento;
+import br.com.fiap.space.domain.enums.Terreno;
 import br.com.fiap.space.domain.exceptions.BateriaCriticaException;
 import br.com.fiap.space.domain.exceptions.TerrenoInvalidoException;
 import br.com.fiap.space.domain.valueobjects.Coordenada;
@@ -8,7 +10,7 @@ import br.com.fiap.space.domain.valueobjects.RelatorioSistema;
 
 public abstract class Sonda {
 
-    private final String idSonda;
+    private String idSonda;
     protected NivelEnergia bateria;
     protected Coordenada posicaoAtual;
 
@@ -23,14 +25,14 @@ public abstract class Sonda {
         }
         this.idSonda = idSonda;
         this.bateria = bateria;
-        this.posicaoAtual = new Coordenada(0, 0); 
+        this.posicaoAtual = new Coordenada(0, 0);
     }
 
     public String getIdSonda() {
         return idSonda;
     }
 
-    public double nivelDaBateria() {
+    public double nivelAtualBateria() {
         return bateria.getCapacidadeAtual();
     }
 
@@ -38,12 +40,8 @@ public abstract class Sonda {
         return posicaoAtual;
     }
 
-    public NivelEnergia getBateria() {
-        return bateria;
-    }
-
-    public void mover(Coordenada destino, Terreno terreno) {
-        if (destino == null) {
+    public void mover(Coordenada posicao, Terreno terreno) {
+        if (posicao == null) {
             throw new IllegalArgumentException("A coordenada de destino não pode ser nula.");
         }
         if (terreno == null) {
@@ -58,63 +56,25 @@ public abstract class Sonda {
 
         double custoEnergia = CUSTO_BASE_MOVIMENTO * terreno.getMultiplicadorConsumo();
 
-        if (!bateria.isSuficiente(custoEnergia)) {
+        if (bateria.getCapacidadeAtual() < custoEnergia) {
             throw new BateriaCriticaException(
                     "Bateria crítica na sonda '" + idSonda
                             + "'! Energia insuficiente para mover. Necessário: " + custoEnergia
                             + ", disponível: " + bateria.getCapacidadeAtual() + ".");
         }
 
-        this.bateria = bateria.consumir(custoEnergia);
-        this.posicaoAtual = destino;
-
-        System.out.println("  [MOVER] Sonda '" + idSonda + "' movida para ("
-                + destino.getEixoX() + ", " + destino.getEixoY() + ")"
-                + " | Terreno: " + terreno.getTipoSolo()
-                + " | Energia consumida: " + custoEnergia
-                + " | Bateria restante: " + String.format("%.1f", bateria.getCapacidadeAtual()));
+        double novaCapacidade = bateria.getCapacidadeAtual() - custoEnergia;
+        this.bateria = new NivelEnergia(novaCapacidade, bateria.getCapacidadeMaxima());
+        this.posicaoAtual = posicao;
     }
 
     protected abstract void realizarAcaoLocal();
 
-    public final void executarRotinaAutonoma(Coordenada destino, Terreno terreno) {
-        System.out.println("\n╔══════════════════════════════════════════════════╗");
-        System.out.println("║  ROTINA AUTÔNOMA — Sonda: " + idSonda);
-        System.out.println("╚══════════════════════════════════════════════════╝");
-
-        System.out.println("\n[PASSO 1] Validando sistema...");
-        RelatorioSistema relatorio = validarSistema();
-        System.out.println("  === Relatório do Sistema ===");
-        System.out.println("    Bateria:   " + relatorio.getStatusBateria());
-        System.out.println("    Rodas:     " + relatorio.getStatusRodas());
-        System.out.println("    Software:  " + relatorio.getStatusSoftware());
-        System.out.println("    Sensores:  " + relatorio.getStatusSensores());
-        System.out.println("    Funções:   " + relatorio.getStatusFuncoes());
-
-        if (!relatorio.isTudoOperante()) {
-            System.out.println("  ⚠ ALERTA: Subsistema(s) com defeito detectado(s)!");
-        }
-
-        System.out.println("\n[PASSO 2] Deslocando para ("
-                + destino.getEixoX() + ", " + destino.getEixoY() + ")...");
+    public void executarRotinaAutonoma(Coordenada destino, Terreno terreno) {
+        validarSistema();
         mover(destino, terreno);
-
-        System.out.println("\n[PASSO 3] Realizando ação local...");
         realizarAcaoLocal();
-
-        System.out.println("\n[PASSO 4] Enviando relatório ao Centro de Comando...");
-        RelatorioSistema relatorioFinal = validarSistema();
-        System.out.println("  === Relatório do Sistema ===");
-        System.out.println("    Bateria:   " + relatorioFinal.getStatusBateria());
-        System.out.println("    Rodas:     " + relatorioFinal.getStatusRodas());
-        System.out.println("    Software:  " + relatorioFinal.getStatusSoftware());
-        System.out.println("    Sensores:  " + relatorioFinal.getStatusSensores());
-        System.out.println("    Funções:   " + relatorioFinal.getStatusFuncoes());
-        System.out.println("  ✔ Relatório enviado com sucesso.");
-
-        System.out.println("\n══════════════════════════════════════════════════");
-        System.out.println("  Rotina autônoma concluída para sonda: " + idSonda);
-        System.out.println("══════════════════════════════════════════════════\n");
+        enviarRelatorio();
     }
 
     public RelatorioSistema validarSistema() {
@@ -125,11 +85,15 @@ public abstract class Sonda {
 
         return new RelatorioSistema(
                 statusBateria,
-                StatusFuncionamento.OPERANTE,  
-                StatusFuncionamento.OPERANTE,  
-                StatusFuncionamento.OPERANTE,  
-                StatusFuncionamento.OPERANTE   
+                StatusFuncionamento.OPERANTE,
+                StatusFuncionamento.OPERANTE,
+                StatusFuncionamento.OPERANTE,
+                StatusFuncionamento.OPERANTE
         );
+    }
+
+    public RelatorioSistema enviarRelatorio() {
+        return validarSistema();
     }
 
     public abstract String getTipo();

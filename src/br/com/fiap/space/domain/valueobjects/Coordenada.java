@@ -1,9 +1,9 @@
 package br.com.fiap.space.domain.valueobjects;
 
-public final class Coordenada {
+public class Coordenada {
 
-    private final int eixoX;
-    private final int eixoY;
+    private int eixoX;
+    private int eixoY;
 
     public Coordenada(int eixoX, int eixoY) {
         if (eixoX < 0 || eixoY < 0) {

@@ -1,4 +1,4 @@
-package br.com.fiap.space.domain;
+package br.com.fiap.space.domain.enums;
 
 public enum Recurso {
 
@@ -6,13 +6,10 @@ public enum Recurso {
     REGOLITO("Regolito", 25.0),
     TITANIO("Titanio", 60.0);
 
-    private final String nome;
-    private final double pesoPorUnidade;
+    private String nome;
+    private double pesoPorUnidade;
 
     Recurso(String nome, double pesoPorUnidade) {
-        if (pesoPorUnidade <= 0) {
-            throw new IllegalArgumentException("O peso por unidade deve ser estritamente positivo (> 0).");
-        }
         this.nome = nome;
         this.pesoPorUnidade = pesoPorUnidade;
     }

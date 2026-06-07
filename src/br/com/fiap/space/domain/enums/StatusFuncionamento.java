@@ -1,4 +1,4 @@
-package br.com.fiap.space.domain;
+package br.com.fiap.space.domain.enums;
 
 public enum StatusFuncionamento {
     OPERANTE,

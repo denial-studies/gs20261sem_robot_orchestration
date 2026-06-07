@@ -28,40 +28,22 @@ public class SondaExploradora extends Sonda implements Recarregavel {
                     "O novo alcance do sensor deve ser estritamente positivo (> 0). Recebido: " + novoAlcance);
         }
         this.alcanceSensor = novoAlcance;
-        System.out.println("  [SENSOR] Sensor da sonda '" + getIdSonda()
-                + "' ajustado para alcance: " + novoAlcance);
     }
 
-    public boolean transmitirDados() {
-        System.out.println("  [TRANSMITIR] Sonda '" + getIdSonda()
-                + "' transmitindo dados de varredura ao Centro de Comando...");
-        System.out.println("  [TRANSMITIR] Dados da posição ("
-                + getPosicaoAtual().getEixoX() + ", " + getPosicaoAtual().getEixoY() + ")"
-                + " com alcance de sensor " + alcanceSensor + " transmitidos com sucesso.");
+    public boolean transmitirDadosAtuais() {
         return true;
     }
 
     @Override
     protected void realizarAcaoLocal() {
-        System.out.println("  [AÇÃO LOCAL] Exploradora realizando varredura de área...");
-
-        this.bateria = bateria.consumir(CUSTO_VARREDURA);
-
-        System.out.println("  [VARREDURA] Área varrida no raio de " + alcanceSensor
-                + " unidades a partir de ("
-                + getPosicaoAtual().getEixoX() + ", " + getPosicaoAtual().getEixoY() + ")"
-                + " | Energia consumida: " + CUSTO_VARREDURA
-                + " | Bateria restante: " + String.format("%.1f", bateria.getCapacidadeAtual()));
-
-        transmitirDados();
+        double novaCapacidade = bateria.getCapacidadeAtual() - CUSTO_VARREDURA;
+        this.bateria = new NivelEnergia(novaCapacidade, bateria.getCapacidadeMaxima());
+        transmitirDadosAtuais();
     }
 
     @Override
     public void conectarBase() {
-        this.bateria = bateria.recarregar();
-        System.out.println("  [RECARREGAR] Sonda exploradora '" + getIdSonda()
-                + "' conectada à base. Bateria recarregada: "
-                + String.format("%.1f / %.1f", bateria.getCapacidadeAtual(), bateria.getCapacidadeMaxima()));
+        this.bateria = new NivelEnergia(bateria.getCapacidadeMaxima(), bateria.getCapacidadeMaxima());
     }
 
     @Override

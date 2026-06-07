@@ -1,19 +1,15 @@
 package br.com.fiap.space.domain.valueobjects;
 
-import br.com.fiap.space.domain.Recurso;
+import br.com.fiap.space.domain.enums.Recurso;
 import br.com.fiap.space.domain.exceptions.CargaExcedidaException;
 
-public final class CompartimentoCarga {
+public class CompartimentoCarga {
 
-    private final double volumeOcupado;
-    private final double volumeMaximo;
-    private final Recurso tipoCarga;
+    private double volumeOcupado;
+    private double volumeMaximo;
+    private Recurso tipoCarga;
 
-    public CompartimentoCarga(double volumeMaximo) {
-        this(0.0, volumeMaximo, null);
-    }
-
-    private CompartimentoCarga(double volumeOcupado, double volumeMaximo, Recurso tipoCarga) {
+    public CompartimentoCarga(double volumeOcupado, double volumeMaximo, Recurso tipoCarga) {
         if (volumeMaximo <= 0) {
             throw new IllegalArgumentException(
                     "O volume máximo do compartimento deve ser positivo. Recebido: " + volumeMaximo);
@@ -44,6 +40,14 @@ public final class CompartimentoCarga {
         return tipoCarga;
     }
 
+    public void definirTipoCarga(Recurso tipoCarga) {
+        this.tipoCarga = tipoCarga;
+    }
+
+    public CompartimentoCarga descarregarVolume() {
+        return new CompartimentoCarga(0, this.volumeMaximo, this.tipoCarga);
+    }
+
     public CompartimentoCarga adicionarVolume(Recurso recurso, int quantidade) {
         if (recurso == null) {
             throw new IllegalArgumentException("O recurso não pode ser nulo.");
@@ -68,9 +72,5 @@ public final class CompartimentoCarga {
         }
 
         return new CompartimentoCarga(novoVolume, this.volumeMaximo, recurso);
-    }
-
-    public CompartimentoCarga descarregarCarga() {
-        return new CompartimentoCarga(this.volumeMaximo);
     }
 }

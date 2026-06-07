@@ -1,5 +1,6 @@
 package br.com.fiap.space.domain;
 
+import br.com.fiap.space.domain.enums.Recurso;
 import br.com.fiap.space.domain.interfaces.Recarregavel;
 import br.com.fiap.space.domain.valueobjects.CompartimentoCarga;
 import br.com.fiap.space.domain.valueobjects.NivelEnergia;
@@ -16,52 +17,31 @@ public class SondaMineradora extends Sonda implements Recarregavel {
             throw new IllegalArgumentException(
                     "A capacidade máxima do compartimento deve ser positiva.");
         }
-        this.carga = new CompartimentoCarga(capacidadeMaxima);
-    }
-
-    public double consultarCompartimentoOcupado() {
-        return carga.getVolumeOcupado();
+        this.carga = new CompartimentoCarga(0, capacidadeMaxima, null);
     }
 
     public CompartimentoCarga getCarga() {
         return carga;
     }
 
-    public void descarregarCompartimento() {
-        this.carga = carga.descarregarCarga();
-        System.out.println("  [DESCARGA] Compartimento da sonda '" + getIdSonda()
-                + "' descarregado com sucesso.");
+    public double consultarCompartimentoOcupado() {
+        return carga.getVolumeOcupado();
     }
 
-    public void minerar(Recurso recurso, int quantidade) {
-        if (recurso == null) {
-            throw new IllegalArgumentException("O recurso não pode ser nulo.");
-        }
-
-        this.bateria = bateria.consumir(CUSTO_MINERACAO);
-
-        this.carga = carga.adicionarVolume(recurso, quantidade);
-
-        String tipoCarga = carga.getTipoCarga() != null ? carga.getTipoCarga().getNome() : "Vazio";
-        System.out.println("  [MINERAR] Sonda '" + getIdSonda() + "' extraiu "
-                + quantidade + " unidade(s) de " + recurso.getNome()
-                + " | Carga [" + tipoCarga + "]: "
-                + String.format("%.1f", carga.getVolumeOcupado()) + " / "
-                + String.format("%.1f", carga.getVolumeMaximo()) + " kg");
+    public void descarregarCompartimento() {
+        this.carga = carga.descarregarVolume();
     }
 
     @Override
     protected void realizarAcaoLocal() {
-        System.out.println("  [AÇÃO LOCAL] Mineradora realizando extração automática de REGOLITO...");
-        minerar(Recurso.REGOLITO, 1);
+        double novaCapacidade = bateria.getCapacidadeAtual() - CUSTO_MINERACAO;
+        this.bateria = new NivelEnergia(novaCapacidade, bateria.getCapacidadeMaxima());
+        this.carga = carga.adicionarVolume(Recurso.REGOLITO, 1);
     }
 
     @Override
     public void conectarBase() {
-        this.bateria = bateria.recarregar();
-        System.out.println("  [RECARREGAR] Sonda mineradora '" + getIdSonda()
-                + "' conectada à base. Bateria recarregada: "
-                + String.format("%.1f / %.1f", bateria.getCapacidadeAtual(), bateria.getCapacidadeMaxima()));
+        this.bateria = new NivelEnergia(bateria.getCapacidadeMaxima(), bateria.getCapacidadeMaxima());
     }
 
     @Override
